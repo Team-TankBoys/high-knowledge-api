@@ -1,3 +1,11 @@
 spring:
   application:
     name: high-knowledge-api
+springdoc:
+  api-docs:
+    enabled: true
+    version: openapi_3_0
+    path: /v3/api-docs
+  swagger-ui:
+    operationsSorter: method
+    path: /swagger-ui.html
