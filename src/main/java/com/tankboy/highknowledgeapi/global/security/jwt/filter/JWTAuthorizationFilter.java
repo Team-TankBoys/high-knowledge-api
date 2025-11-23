@@ -56,7 +56,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(
                             username,
-                            null,
+                            "N/A",
                             Collections.singleton(new SimpleGrantedAuthority(role))
                     );
 
@@ -68,5 +68,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             log.error("JWT 인증 중 오류 발생: {}", e.getMessage());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
+
+        filterChain.doFilter(request, response);
     }
 }

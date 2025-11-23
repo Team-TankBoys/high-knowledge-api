@@ -3,7 +3,6 @@ package com.tankboy.highknowledgeapi.global.security.jwt.support;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -17,17 +16,9 @@ import java.util.UUID;
 public class JWTUtil {
 
     public static final String ACCESS_TOKEN_TYPE = "access";
-
-    private final SecretKey secretKey;
-    private final long accessTokenExpiration;
-
-    public JWTUtil(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration.access}") long accessTokenExpiration
-    ) {
-        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
-        this.accessTokenExpiration = accessTokenExpiration;
-    }
+    private static final SecretKey SECRET_KEY =
+            new SecretKeySpec("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+    private static final long ACCESS_TOKEN_EXPIRATION = 3600000L;
 
     public String getJwtFromHttpRequest(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
@@ -39,7 +30,7 @@ public class JWTUtil {
 
     public String getJti(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getPayload()
@@ -48,7 +39,7 @@ public class JWTUtil {
 
     public String getUsername(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getPayload()
@@ -57,7 +48,7 @@ public class JWTUtil {
 
     public String getRole(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getPayload()
@@ -66,7 +57,7 @@ public class JWTUtil {
 
     public String getTokenType(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getPayload()
@@ -75,7 +66,7 @@ public class JWTUtil {
 
     public Boolean isTokenExpired(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getPayload()
@@ -84,12 +75,10 @@ public class JWTUtil {
     }
 
     public String createAccessToken(String username, String role) {
-        return createToken(username, role, ACCESS_TOKEN_TYPE, accessTokenExpiration);
+        return createToken(username, role, ACCESS_TOKEN_TYPE, ACCESS_TOKEN_EXPIRATION);
     }
 
     public String createToken(String username, String role, String tokenType, Long expiredMs) {
-        log.info(new Date(System.currentTimeMillis()).toString());
-        log.info(new Date(System.currentTimeMillis() + expiredMs).toString());
         return Jwts.builder()
                 .id(UUID.randomUUID().toString())
                 .claim("type", tokenType)
@@ -97,7 +86,7 @@ public class JWTUtil {
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis())) // 발급 시간
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료 시간
-                .signWith(secretKey) // 비밀키를 사용하여 서명
+                .signWith(SECRET_KEY) // 비밀키를 사용하여 서명
                 .compact();
     }
 }

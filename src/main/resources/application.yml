@@ -1,11 +1,23 @@
 spring:
   application:
     name: high-knowledge-api
+
+  datasource:
+    url: jdbc:h2:mem:high-knowledge-db
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true
+
 springdoc:
   api-docs:
     enabled: true
     version: openapi_3_0
     path: /v3/api-docs
+
   swagger-ui:
     operationsSorter: method
     path: /swagger-ui.html
