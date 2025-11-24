@@ -1,6 +1,11 @@
 package com.tankboy.highknowledgeapi.domain.post.presentation.dto.request;
 
+import java.util.Date;
+
 public record UpdatePostRequest(
-        // Record 사용 방법은 CreatePostRequest.java 참고!
+        String title,
+        Date timeDate,
+        String content,
+        String password
 ) {
 }

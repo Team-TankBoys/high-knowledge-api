@@ -5,13 +5,13 @@ import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.CreateP
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.UpdatePostRequest;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.response.PostResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -20,31 +20,31 @@ public class PostController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PostResponse createPost(@RequestBody CreatePostRequest request) {
-        throw new NotImplementedException();
+        return postService.createPost(request);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PostResponse getPost(@PathVariable Long id) {
-        throw new NotImplementedException();
+        return postService.getPost(id);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<PostResponse> getAllPosts() {
-        throw new NotImplementedException();
+        return postService.getAllPosts();
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PostResponse updatePost(@PathVariable Long id, @RequestBody UpdatePostRequest request) {
-        throw new NotImplementedException();
+        return postService.updatePost(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PostResponse deletePost(@PathVariable Long id) {
-        throw new NotImplementedException();
+        return postService.deletePost(id);
     }
     
 }
