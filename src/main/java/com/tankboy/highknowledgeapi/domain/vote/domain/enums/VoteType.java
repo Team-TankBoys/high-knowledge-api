@@ -1,2 +1,8 @@
-package com.tankboy.highknowledgeapi.domain.vote.domain.enums;public enum VoteType {
+package com.tankboy.highknowledgeapi.domain.vote.domain.enums;
+
+public enum VoteType {
+
+    UP,
+    DOWN
+
 }
