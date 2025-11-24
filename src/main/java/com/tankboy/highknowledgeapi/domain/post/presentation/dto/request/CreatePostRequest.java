@@ -1,6 +1,6 @@
 package com.tankboy.highknowledgeapi.domain.post.presentation.dto.request;
 
-public record PostCreateRequest(
+public record CreatePostRequest(
         // record 사용법: 일반 class 객체의 필드를 선언하듯
         //  이 소괄호 안에 필드를 선언하면 된다.
 
