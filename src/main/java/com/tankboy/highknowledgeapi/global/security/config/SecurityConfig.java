@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -90,9 +91,16 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/h2-console/**", "/h2-console").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/auth/login").permitAll()
 
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/{id}").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/{id}").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/users/{id}").permitAll()
+
+                        .anyRequest().denyAll()
                 )
 
                 .addFilterBefore(new JWTAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
