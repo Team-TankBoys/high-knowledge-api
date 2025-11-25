@@ -16,22 +16,16 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostEntity extends BaseEntity {
 
+    @Column(nullable = false, updatable = false)
+    private Long authorUserId;
+
     @Column(nullable = false)
     private String title;
-     
-    @Column(nullable = false)
-    private Date timeDate;
 
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String password;
-
-    public void update(String title, Date timeDate, String content, String password) {
-        this.title = title;
-        this.timeDate = timeDate;
+    public void setContent(String content) {
         this.content = content;
-        this.password = password;
     }
 }

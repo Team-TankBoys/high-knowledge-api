@@ -4,8 +4,6 @@ import java.util.Date;
 
 public record CreatePostRequest(
         String title,
-        Date timeDate,
-        String content,
-        String password
+        String content
 ) {
 }
