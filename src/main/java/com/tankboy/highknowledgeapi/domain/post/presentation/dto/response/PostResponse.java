@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public record PostResponse(
         Long id,
+        Long authorId,
         String title,
         String content,
         LocalDateTime createdAt,
@@ -15,6 +16,7 @@ public record PostResponse(
     public static PostResponse of(PostEntity entity) {
         return new PostResponse(
                 entity.getId(),
+                entity.getAuthorUserId(),
                 entity.getTitle(),
                 entity.getContent(),
                 entity.getCreatedAt(),
