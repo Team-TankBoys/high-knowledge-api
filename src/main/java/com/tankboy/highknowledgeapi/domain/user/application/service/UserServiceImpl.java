@@ -3,6 +3,8 @@ package com.tankboy.highknowledgeapi.domain.user.application.service;
 import ch.qos.logback.core.util.StringUtil;
 import com.tankboy.highknowledgeapi.domain.user.domain.entity.UserEntity;
 import com.tankboy.highknowledgeapi.domain.user.domain.repository.UserRepository;
+import com.tankboy.highknowledgeapi.domain.user.exception.UserAlreadyExistsException;
+import com.tankboy.highknowledgeapi.domain.user.exception.UserNotFoundException;
 import com.tankboy.highknowledgeapi.domain.user.presentation.dto.request.RegisterUserRequest;
 import com.tankboy.highknowledgeapi.domain.user.presentation.dto.request.UpdateUserRequest;
 import com.tankboy.highknowledgeapi.domain.user.presentation.dto.response.UserMeResponse;
@@ -23,6 +25,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public UserMeResponse create(RegisterUserRequest request) {
+        if (userRepository.existsByName(request.name())) {
+            throw new UserAlreadyExistsException();
+        }
+
         UserEntity user = UserEntity.builder()
                 .name(request.name())
                 .password(passwordEncoder.encode(request.password()))
@@ -36,7 +42,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserProfileResponse findById(Long id) {
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
         return UserProfileResponse.of(user);
     }
 
@@ -51,7 +57,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserMeResponse update(Long id, UpdateUserRequest request) {
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
+
+        if (userRepository.existsByName(request.name())) {
+            throw new UserAlreadyExistsException();
+        }
 
         user.setName(request.name());
         user.setEmail(request.email());
@@ -66,7 +76,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserMeResponse delete(Long id) {
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
         userRepository.delete(user);
         return UserMeResponse.of(user);
     }
