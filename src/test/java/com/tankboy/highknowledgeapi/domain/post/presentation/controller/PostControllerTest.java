@@ -1,6 +1,7 @@
 package com.tankboy.highknowledgeapi.domain.post.presentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tankboy.highknowledgeapi.test.config.BaseController;
 import com.tankboy.highknowledgeapi.domain.post.application.service.PostService;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.CreatePostRequest;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.UpdatePostRequest;
@@ -8,11 +9,8 @@ import com.tankboy.highknowledgeapi.domain.post.presentation.dto.response.PostRe
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
@@ -29,17 +27,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(PostController.class)
 @DisplayName("PostController 테스트")
-class PostControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class PostControllerTest extends BaseController {
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private PostService postService;
 
     private final Long TEST_POST_ID = 1L;
