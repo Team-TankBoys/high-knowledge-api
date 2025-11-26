@@ -3,8 +3,10 @@ package com.tankboy.highknowledgeapi.domain.vote.application.service;
 import com.tankboy.highknowledgeapi.domain.user.domain.entity.UserEntity;
 import com.tankboy.highknowledgeapi.domain.user.domain.repository.UserRepository;
 import com.tankboy.highknowledgeapi.domain.vote.domain.entity.VoteEntity;
+import com.tankboy.highknowledgeapi.domain.vote.domain.enums.VoteType;
 import com.tankboy.highknowledgeapi.domain.vote.domain.repository.VoteRepository;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.request.VoteRequest;
+import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -58,13 +60,20 @@ public class VoteService {
         vote.ifPresent(voteRepository::delete);
     }
 
-//    public void getVote(Long postId) {
-//        Optional<List<VoteEntity>> votes = voteRepository.findAllByPostId(postId);
-//
-//        if (votes.isPresent()) {
-//            for (VoteEntity vote : votes.get()) {
-//
-//            }
-//        }
-//    }
+    public VoteResponse getVote(Long postId) {
+        Optional<List<VoteEntity>> votes = voteRepository.findAllByPostId(postId);
+        int upVoteCount = 0;
+        int downVoteCount = 0;
+
+        if (votes.isPresent()) {
+            for (VoteEntity vote : votes.get()) {
+                if (vote.getType() == VoteType.UP) {
+                    upVoteCount++;
+                } else {
+                    downVoteCount++;
+                }
+            }
+        }
+        return new VoteResponse(upVoteCount, downVoteCount);
+    }
 }
