@@ -1,4 +1,4 @@
-package com.tankboy.highknowledgeapi.global.dto.response;
+package com.tankboy.highknowledgeapi.global.common.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
