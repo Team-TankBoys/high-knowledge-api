@@ -26,6 +26,7 @@ public class VoteController {
         throw new NotImplementedException();
     }
 
+    @GetMapping("/{postId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelVote(@PathVariable Long postId) {
         throw new NotImplementedException();
