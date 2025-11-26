@@ -11,7 +11,7 @@ public record VoteResponse(
 
     public static VoteResponse of(VoteEntity entity) {
         return new VoteResponse(
-                entity.getId(),
+                entity.getPostId(),
                 entity.getUserId(),
                 entity.getType()
         );

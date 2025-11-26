@@ -64,19 +64,18 @@ public class VoteServiceImpl implements VoteService {
     }
 
     public VoteCountResponse getVote(Long postId) {
-        Optional<List<VoteEntity>> votes = voteRepository.findAllByPostId(postId);
+        List<VoteEntity> votes = voteRepository.findAllByPostId(postId);
         int upVoteCount = 0;
         int downVoteCount = 0;
 
-        if (votes.isPresent()) {
-            for (VoteEntity vote : votes.get()) {
-                if (vote.getType() == VoteType.UP) {
-                    upVoteCount++;
-                } else {
-                    downVoteCount++;
-                }
+        for (VoteEntity vote : votes) {
+            if (vote.getType() == VoteType.UP) {
+                upVoteCount++;
+            } else {
+                downVoteCount++;
             }
         }
+
         return new VoteCountResponse(upVoteCount, downVoteCount);
     }
 }

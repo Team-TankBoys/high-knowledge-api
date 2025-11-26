@@ -1,6 +1,6 @@
 package com.tankboy.highknowledgeapi.domain.vote.presentation.controller;
 
-import com.tankboy.highknowledgeapi.domain.vote.application.service.VoteServiceImpl;
+import com.tankboy.highknowledgeapi.domain.vote.application.service.VoteService;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.request.VoteRequest;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteCountResponse;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteResponse;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class VoteController {
 
-    private final VoteServiceImpl voteService;
+    private final VoteService voteService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -29,7 +29,7 @@ public class VoteController {
     }
 
     @DeleteMapping("/{postId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public VoteResponse cancelVote(@PathVariable Long postId) {
         return voteService.deleteVote(postId);
     }
