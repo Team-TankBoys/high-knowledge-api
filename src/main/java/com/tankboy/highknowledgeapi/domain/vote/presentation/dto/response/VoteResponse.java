@@ -1,10 +1,20 @@
 package com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response;
 
+import com.tankboy.highknowledgeapi.domain.vote.domain.entity.VoteEntity;
+import com.tankboy.highknowledgeapi.domain.vote.domain.enums.VoteType;
+
 public record VoteResponse(
-        int upVoteCount,
-        int downVoteCount
+        Long postId,
+        Long userId,
+        VoteType voteType
 ) {
-    public static VoteResponse of(int upVoteCount, int downVoteCount) {
-        return new VoteResponse(upVoteCount, downVoteCount);
+
+    public static VoteResponse of(VoteEntity entity) {
+        return new VoteResponse(
+                entity.getPostId(),
+                entity.getUserId(),
+                entity.getType()
+        );
     }
+
 }
