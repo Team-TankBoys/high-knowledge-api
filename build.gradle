@@ -40,6 +40,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// spring test
+	implementation 'org.springframework.boot:spring-boot-starter-test'
+
 	// h2
 	runtimeOnly 'com.h2database:h2'
 
