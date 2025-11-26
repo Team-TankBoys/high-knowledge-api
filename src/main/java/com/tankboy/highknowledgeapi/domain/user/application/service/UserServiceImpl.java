@@ -1,8 +1,10 @@
 package com.tankboy.highknowledgeapi.domain.user.application.service;
 
 import ch.qos.logback.core.util.StringUtil;
+import com.tankboy.highknowledgeapi.domain.auth.exception.InvalidCredentialsException;
 import com.tankboy.highknowledgeapi.domain.user.domain.entity.UserEntity;
 import com.tankboy.highknowledgeapi.domain.user.domain.repository.UserRepository;
+import com.tankboy.highknowledgeapi.domain.user.exception.UnauthorizedUserException;
 import com.tankboy.highknowledgeapi.domain.user.exception.UserAlreadyExistsException;
 import com.tankboy.highknowledgeapi.domain.user.exception.UserNotFoundException;
 import com.tankboy.highknowledgeapi.domain.user.presentation.dto.request.RegisterUserRequest;
@@ -10,6 +12,7 @@ import com.tankboy.highknowledgeapi.domain.user.presentation.dto.request.UpdateU
 import com.tankboy.highknowledgeapi.domain.user.presentation.dto.response.UserMeResponse;
 import com.tankboy.highknowledgeapi.domain.user.presentation.dto.response.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +66,15 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException();
         }
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity currentSignInUser = userRepository.findByName(username)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (currentSignInUser.getId() != id) {
+            throw new UnauthorizedUserException();
+        }
+
         user.setName(request.name());
         user.setEmail(request.email());
         if (!StringUtil.isNullOrEmpty(request.password())) {
@@ -75,6 +87,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public UserMeResponse delete(Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity currentSignInUser = userRepository.findByName(username)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (currentSignInUser.getId() != id) {
+            throw new UnauthorizedUserException();
+        }
+
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
         userRepository.delete(user);

@@ -97,10 +97,20 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users/{id}").authenticated()
                         .requestMatchers(HttpMethod.GET, "/users").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/users/{id}").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/users/{id}").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/{id}").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/users/{id}").authenticated()
 
-                        .anyRequest().denyAll()
+                        .requestMatchers(HttpMethod.POST, "/posts").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/posts/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/posts").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/posts/{id}").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/posts/{id}").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/vote").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/vote").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/vote").authenticated()
+
+                        .anyRequest().permitAll()
                 )
 
                 .addFilterBefore(new JWTAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
