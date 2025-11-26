@@ -26,8 +26,7 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     public PostResponse create(CreatePostRequest request) {
-        String username = (String)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         UserEntity userEntity = userRepository.findByName(username)
                 .orElseThrow(UserNotFoundException::new);
@@ -60,6 +59,15 @@ public class PostServiceImpl implements PostService {
         PostEntity post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity userEntity = userRepository.findByName(username)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (post.getAuthorUserId() != userEntity.getId()) {
+            throw new UnauthorizedPostAccessException();
+        }
+
         post.setContent(request.content());
         return PostResponse.of(post);
     }
@@ -69,8 +77,7 @@ public class PostServiceImpl implements PostService {
         PostEntity post = postRepository.findById(id)
                 .orElseThrow(PostNotFoundException::new);
 
-        String username = (String)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         UserEntity userEntity = userRepository.findByName(username)
                 .orElseThrow(UserNotFoundException::new);
