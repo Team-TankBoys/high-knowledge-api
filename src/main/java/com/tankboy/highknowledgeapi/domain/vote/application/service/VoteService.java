@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,4 +46,25 @@ public class VoteService {
         voteRepository.save(vote);
     }
 
+    public void deleteVote(Long postId) {
+        String username = (String)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        UserEntity userEntity = userRepository.findByName(username)
+                .orElseThrow(() -> new IllegalArgumentException("User Not Found"));
+
+        Optional<VoteEntity> vote = voteRepository.findByPostIdAndUserId(postId, userEntity.getId());
+
+        vote.ifPresent(voteRepository::delete);
+    }
+
+//    public void getVote(Long postId) {
+//        Optional<List<VoteEntity>> votes = voteRepository.findAllByPostId(postId);
+//
+//        if (votes.isPresent()) {
+//            for (VoteEntity vote : votes.get()) {
+//
+//            }
+//        }
+//    }
 }
