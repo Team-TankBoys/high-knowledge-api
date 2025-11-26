@@ -6,6 +6,7 @@ import com.tankboy.highknowledgeapi.domain.vote.domain.entity.VoteEntity;
 import com.tankboy.highknowledgeapi.domain.vote.domain.enums.VoteType;
 import com.tankboy.highknowledgeapi.domain.vote.domain.repository.VoteRepository;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.request.VoteRequest;
+import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteCountResponse;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +24,7 @@ public class VoteServiceImpl implements VoteService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createVote(VoteRequest request) {
+    public VoteResponse createVote(VoteRequest request) {
         String username = (String)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -46,9 +47,10 @@ public class VoteServiceImpl implements VoteService {
                 .type(request.voteType())
                 .build();
         voteRepository.save(vote);
+        return VoteResponse.of(vote);
     }
 
-    public void deleteVote(Long postId) {
+    public VoteResponse deleteVote(Long postId) {
         String username = (String)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -58,9 +60,10 @@ public class VoteServiceImpl implements VoteService {
         Optional<VoteEntity> vote = voteRepository.findByPostIdAndUserId(postId, userEntity.getId());
 
         vote.ifPresent(voteRepository::delete);
+        return VoteResponse.of(vote.get());
     }
 
-    public VoteResponse getVote(Long postId) {
+    public VoteCountResponse getVote(Long postId) {
         Optional<List<VoteEntity>> votes = voteRepository.findAllByPostId(postId);
         int upVoteCount = 0;
         int downVoteCount = 0;
@@ -74,6 +77,6 @@ public class VoteServiceImpl implements VoteService {
                 }
             }
         }
-        return new VoteResponse(upVoteCount, downVoteCount);
+        return new VoteCountResponse(upVoteCount, downVoteCount);
     }
 }

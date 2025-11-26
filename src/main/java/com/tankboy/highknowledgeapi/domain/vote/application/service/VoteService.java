@@ -1,12 +1,13 @@
 package com.tankboy.highknowledgeapi.domain.vote.application.service;
 
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.request.VoteRequest;
+import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteCountResponse;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteResponse;
 
 public interface VoteService {
-    void createVote(VoteRequest request);
+    VoteResponse createVote(VoteRequest request);
 
-    void deleteVote(Long id);
+    VoteResponse deleteVote(Long id);
 
-    VoteResponse getVote(Long id);
+    VoteCountResponse getVote(Long id);
 }
