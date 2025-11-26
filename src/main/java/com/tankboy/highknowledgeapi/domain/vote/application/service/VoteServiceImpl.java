@@ -2,9 +2,12 @@ package com.tankboy.highknowledgeapi.domain.vote.application.service;
 
 import com.tankboy.highknowledgeapi.domain.user.domain.entity.UserEntity;
 import com.tankboy.highknowledgeapi.domain.user.domain.repository.UserRepository;
+import com.tankboy.highknowledgeapi.domain.user.exception.UserNotFoundException;
 import com.tankboy.highknowledgeapi.domain.vote.domain.entity.VoteEntity;
 import com.tankboy.highknowledgeapi.domain.vote.domain.enums.VoteType;
 import com.tankboy.highknowledgeapi.domain.vote.domain.repository.VoteRepository;
+import com.tankboy.highknowledgeapi.domain.vote.exception.DuplicateVoteException;
+import com.tankboy.highknowledgeapi.domain.vote.exception.VoteNotFoundException;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.request.VoteRequest;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteCountResponse;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteResponse;
@@ -29,13 +32,13 @@ public class VoteServiceImpl implements VoteService {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         UserEntity userEntity = userRepository.findByName(username)
-                .orElseThrow(() -> new IllegalArgumentException("User Not Found"));
+                .orElseThrow(UserNotFoundException::new);
 
         Optional<VoteEntity> presentVote = voteRepository.findByPostIdAndUserId(request.postId(), userEntity.getId());
 
         if (presentVote.isPresent()) {
             if (request.voteType() == presentVote.get().getType()) {
-                throw new IllegalArgumentException("User has already voted on this post");
+                throw new DuplicateVoteException();
             } else {
                 voteRepository.delete(presentVote.get());
             }
@@ -50,17 +53,19 @@ public class VoteServiceImpl implements VoteService {
         return VoteResponse.of(vote);
     }
 
+    @Transactional
     public VoteResponse deleteVote(Long postId) {
         String username = (String)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         UserEntity userEntity = userRepository.findByName(username)
-                .orElseThrow(() -> new IllegalArgumentException("User Not Found"));
+                .orElseThrow(UserNotFoundException::new);
 
-        Optional<VoteEntity> vote = voteRepository.findByPostIdAndUserId(postId, userEntity.getId());
+        VoteEntity vote = voteRepository.findByPostIdAndUserId(postId, userEntity.getId())
+                .orElseThrow(VoteNotFoundException::new);
 
-        vote.ifPresent(voteRepository::delete);
-        return VoteResponse.of(vote.get());
+        voteRepository.delete(vote);
+        return VoteResponse.of(vote);
     }
 
     public VoteCountResponse getVote(Long postId) {

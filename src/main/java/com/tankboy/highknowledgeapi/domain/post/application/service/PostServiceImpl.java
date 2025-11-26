@@ -2,11 +2,14 @@ package com.tankboy.highknowledgeapi.domain.post.application.service;
 
 import com.tankboy.highknowledgeapi.domain.post.domain.entity.PostEntity;
 import com.tankboy.highknowledgeapi.domain.post.domain.repository.PostRepository;
+import com.tankboy.highknowledgeapi.domain.post.exception.PostNotFoundException;
+import com.tankboy.highknowledgeapi.domain.post.exception.UnauthorizedPostAccessException;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.CreatePostRequest;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.UpdatePostRequest;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.response.PostResponse;
 import com.tankboy.highknowledgeapi.domain.user.domain.entity.UserEntity;
 import com.tankboy.highknowledgeapi.domain.user.domain.repository.UserRepository;
+import com.tankboy.highknowledgeapi.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,7 +30,7 @@ public class PostServiceImpl implements PostService {
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         UserEntity userEntity = userRepository.findByName(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with name: " + username));
+                .orElseThrow(UserNotFoundException::new);
 
         PostEntity post = PostEntity.builder()
                 .authorUserId(userEntity.getId())
@@ -41,7 +44,7 @@ public class PostServiceImpl implements PostService {
 
     public PostResponse findById(Long id) {
         PostEntity post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+                .orElseThrow(PostNotFoundException::new);
         return PostResponse.of(post);
     }
 
@@ -55,7 +58,7 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse update(Long id, UpdatePostRequest request) {
         PostEntity post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+                .orElseThrow(PostNotFoundException::new);
 
         post.setContent(request.content());
         return PostResponse.of(post);
@@ -64,16 +67,16 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse delete(Long id) {
         PostEntity post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+                .orElseThrow(PostNotFoundException::new);
 
         String username = (String)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         UserEntity userEntity = userRepository.findByName(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with name: " + username));
+                .orElseThrow(UserNotFoundException::new);
 
         if (post.getAuthorUserId() != userEntity.getId()) {
-            throw new IllegalArgumentException("You are not authorized to delete this post.");
+            throw new UnauthorizedPostAccessException();
         }
 
         postRepository.delete(post);

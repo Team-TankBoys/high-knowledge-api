@@ -17,14 +17,13 @@ public class VoteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public VoteResponse vote(VoteRequest request) {
+    public VoteResponse vote(@RequestBody VoteRequest request) {
         return voteService.createVote(request);
     }
 
     @GetMapping("/{postId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public VoteCountResponse getVote(@PathVariable Long postId) {
-        // 특정 postId를 가진 vote Entity를 모두 조회
         return voteService.getVote(postId);
     }
 

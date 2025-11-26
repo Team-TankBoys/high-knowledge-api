@@ -2,11 +2,14 @@ package com.tankboy.highknowledgeapi.domain.post.application.service;
 
 import com.tankboy.highknowledgeapi.domain.post.domain.entity.PostEntity;
 import com.tankboy.highknowledgeapi.domain.post.domain.repository.PostRepository;
+import com.tankboy.highknowledgeapi.domain.post.exception.PostNotFoundException;
+import com.tankboy.highknowledgeapi.domain.post.exception.UnauthorizedPostAccessException;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.CreatePostRequest;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.UpdatePostRequest;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.response.PostResponse;
 import com.tankboy.highknowledgeapi.domain.user.domain.entity.UserEntity;
 import com.tankboy.highknowledgeapi.domain.user.domain.repository.UserRepository;
+import com.tankboy.highknowledgeapi.domain.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -108,8 +111,7 @@ class PostServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> postService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("User not found with name: unknownUser");
+                .isInstanceOf(UserNotFoundException.class);
 
         verify(postRepository, times(0)).save(any(PostEntity.class));
     }
@@ -141,8 +143,7 @@ class PostServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> postService.findById(postId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Post not found with id: " + postId);
+                .isInstanceOf(PostNotFoundException.class);
 
         verify(postRepository, times(1)).findById(postId);
     }
@@ -216,8 +217,7 @@ class PostServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> postService.update(postId, request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Post not found with id: " + postId);
+                .isInstanceOf(PostNotFoundException.class);
 
         verify(postRepository, times(1)).findById(postId);
     }
@@ -254,8 +254,7 @@ class PostServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> postService.delete(postId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Post not found with id: " + postId);
+                .isInstanceOf(PostNotFoundException.class);
 
         verify(postRepository, times(1)).findById(postId);
         verify(postRepository, times(0)).delete(any(PostEntity.class));
@@ -274,8 +273,7 @@ class PostServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> postService.delete(postId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("User not found with name: unknownUser");
+                .isInstanceOf(UserNotFoundException.class);
 
         verify(postRepository, times(1)).findById(postId);
         verify(postRepository, times(0)).delete(any(PostEntity.class));
@@ -298,8 +296,7 @@ class PostServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> postService.delete(postId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("You are not authorized to delete this post.");
+                .isInstanceOf(UnauthorizedPostAccessException.class);
 
         verify(postRepository, times(1)).findById(postId);
         verify(postRepository, times(0)).delete(any(PostEntity.class));

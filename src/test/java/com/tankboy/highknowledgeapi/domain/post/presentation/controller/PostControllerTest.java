@@ -3,6 +3,8 @@ package com.tankboy.highknowledgeapi.domain.post.presentation.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tankboy.highknowledgeapi.test.config.BaseController;
 import com.tankboy.highknowledgeapi.domain.post.application.service.PostService;
+import com.tankboy.highknowledgeapi.domain.post.exception.PostNotFoundException;
+import com.tankboy.highknowledgeapi.domain.post.exception.UnauthorizedPostAccessException;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.CreatePostRequest;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.request.UpdatePostRequest;
 import com.tankboy.highknowledgeapi.domain.post.presentation.dto.response.PostResponse;
@@ -136,7 +138,7 @@ class PostControllerTest extends BaseController {
     void getPost_Fail_NotFound() throws Exception {
         // given
         given(postService.findById(TEST_POST_ID))
-                .willThrow(new IllegalArgumentException("Post not found with id: " + TEST_POST_ID));
+                .willThrow(new PostNotFoundException());
 
         // when
         ResultActions result = mockMvc.perform(get("/posts/{id}", TEST_POST_ID)
@@ -144,7 +146,7 @@ class PostControllerTest extends BaseController {
 
         // then
         result.andDo(print())
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
 
         verify(postService, times(1)).findById(TEST_POST_ID);
     }
@@ -272,7 +274,7 @@ class PostControllerTest extends BaseController {
         // given
         UpdatePostRequest request = new UpdatePostRequest("Updated Content");
         given(postService.update(eq(TEST_POST_ID), any(UpdatePostRequest.class)))
-                .willThrow(new IllegalArgumentException("Post not found with id: " + TEST_POST_ID));
+                .willThrow(new PostNotFoundException());
 
         // when
         ResultActions result = mockMvc.perform(put("/posts/{id}", TEST_POST_ID)
@@ -282,7 +284,7 @@ class PostControllerTest extends BaseController {
 
         // then
         result.andDo(print())
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
 
         verify(postService, times(1)).update(eq(TEST_POST_ID), any(UpdatePostRequest.class));
     }
@@ -328,7 +330,7 @@ class PostControllerTest extends BaseController {
     void deletePost_Fail_Unauthorized() throws Exception {
         // given
         given(postService.delete(TEST_POST_ID))
-                .willThrow(new IllegalArgumentException("You are not authorized to delete this post."));
+                .willThrow(new UnauthorizedPostAccessException());
 
         // when
         ResultActions result = mockMvc.perform(delete("/posts/{id}", TEST_POST_ID)
@@ -337,7 +339,7 @@ class PostControllerTest extends BaseController {
 
         // then
         result.andDo(print())
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isForbidden());
 
         verify(postService, times(1)).delete(TEST_POST_ID);
     }
