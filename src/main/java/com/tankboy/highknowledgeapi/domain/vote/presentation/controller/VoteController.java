@@ -1,6 +1,6 @@
 package com.tankboy.highknowledgeapi.domain.vote.presentation.controller;
 
-import com.tankboy.highknowledgeapi.domain.vote.application.service.VoteService;
+import com.tankboy.highknowledgeapi.domain.vote.application.service.VoteServiceImpl;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.request.VoteRequest;
 import com.tankboy.highknowledgeapi.domain.vote.presentation.dto.response.VoteResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class VoteController {
 
-    private final VoteService voteService;
+    private final VoteServiceImpl voteService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
